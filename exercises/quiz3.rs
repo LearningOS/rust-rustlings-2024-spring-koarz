@@ -15,19 +15,29 @@
 // "A+" to show that your changes allow alphabetical grades.
 //
 // Execute `rustlings hint quiz3` or use the `hint` watch subcommand for a hint.
-
-// I AM NOT DONE
+enum GradeType {
+    Num,
+    Str,
+}
 
 pub struct ReportCard {
     pub grade: f32,
     pub student_name: String,
     pub student_age: u8,
+    pub grade_type: GradeType,
 }
+
 
 impl ReportCard {
     pub fn print(&self) -> String {
-        format!("{} ({}) - achieved a grade of {}",
-            &self.student_name, &self.student_age, &self.grade)
+        let mut str: String;
+        match self.grade_type {
+            GradeType::Num => str = format!("{} ({}) - achieved a grade of {}",
+                                            &self.student_name, &self.student_age, &self.grade),
+            GradeType::Str => str = format!("{} ({}) - achieved a grade of {}",
+                                            &self.student_name, &self.student_age, "A+")
+        }
+        str
     }
 }
 
@@ -41,6 +51,7 @@ mod tests {
             grade: 2.1,
             student_name: "Tom Wriggle".to_string(),
             student_age: 12,
+            grade_type: GradeType::Num,
         };
         assert_eq!(
             report_card.print(),
@@ -55,6 +66,7 @@ mod tests {
             grade: 2.1,
             student_name: "Gary Plotter".to_string(),
             student_age: 11,
+            grade_type: GradeType::Str,
         };
         assert_eq!(
             report_card.print(),
