@@ -6,6 +6,7 @@
 //
 // Execute `rustlings hint from_into` or use the `hint` watch subcommand for a
 // hint.
+use core::num::ParseIntError;
 
 #[derive(Debug)]
 struct Person {
@@ -40,10 +41,26 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of
 // Person Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
-
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+        if s.is_empty() || !s.contains(",") || s.rfind(",") != s.find(",") || s.find(",") == Some(0) || s.find(",") == Some(s.len() - 1) {
+            return Person {
+                name: String::from("John"),
+                age: 30,
+            };
+        }
+        let name = &s[0..s.find(",").unwrap()];
+        let age = &s[s.find(",").unwrap() + 1..s.len()].parse::<usize>();
+        if let Err(_) = age {
+            return Person {
+                name: String::from("John"),
+                age: 30,
+            };
+        }
+        Person {
+            name: name.to_string(),
+            age: <Result<usize, ParseIntError> as Clone>::clone(&age).unwrap(),
+        }
     }
 }
 
@@ -59,6 +76,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
     #[test]
     fn test_default() {
         // Test that the default person is 30 year old John
@@ -66,6 +84,7 @@ mod tests {
         assert_eq!(dp.name, "John");
         assert_eq!(dp.age, 30);
     }
+
     #[test]
     fn test_bad_convert() {
         // Test that John is returned when bad string is provided
@@ -73,6 +92,7 @@ mod tests {
         assert_eq!(p.name, "John");
         assert_eq!(p.age, 30);
     }
+
     #[test]
     fn test_good_convert() {
         // Test that "Mark,20" works
@@ -80,6 +100,7 @@ mod tests {
         assert_eq!(p.name, "Mark");
         assert_eq!(p.age, 20);
     }
+
     #[test]
     fn test_bad_age() {
         // Test that "Mark,twenty" will return the default person due to an
