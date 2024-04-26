@@ -1,9 +1,9 @@
+use std::collections::HashMap;
+
 /*
 	stack
 	This question requires you to use a stack to achieve a bracket match
 */
-
-// I AM NOT DONE
 #[derive(Debug)]
 struct Stack<T> {
 	size: usize,
@@ -32,7 +32,11 @@ impl<T> Stack<T> {
 	}
 	fn pop(&mut self) -> Option<T> {
 		// TODO
-		None
+		if self.size < 0 {
+			return None;
+		}
+		self.size -=1 ;
+		self.data.pop()
 	}
 	fn peek(&self) -> Option<&T> {
 		if 0 == self.size {
@@ -102,7 +106,24 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 fn bracket_match(bracket: &str) -> bool
 {
 	//TODO
-	true
+	let map = HashMap::from([('{', 0), ('}', 1),('(', 4),(')',5),('[',8),(']',9)]);
+	let mut st: Stack::<char> =  Stack::new();
+	let chars: std::str::Chars<'_> = bracket.chars().clone();
+	for c in chars {
+		if !map.contains_key(&c) {
+			continue;
+		}
+		if map[&c] & 1 == 1 {
+			if !st.is_empty() && map[st.peek().unwrap()] == map[&c] - 1 {
+				st.pop();
+			} else {
+				return false;
+			}
+		} else {
+			st.push(c);
+		}
+	}
+	st.is_empty()
 }
 
 #[cfg(test)]
